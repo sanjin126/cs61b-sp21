@@ -121,6 +121,58 @@ public class Model extends Observable {
         return changed;
     }
 
+    private boolean processCol(int col) {
+        boolean changed = false;
+        int row = size() - 2; // from the second top
+        while (row >= 0) {
+            Tile tile = board.tile(col, row);
+            if (tile == null) {
+                -- row;
+                continue;
+            }
+
+            int add_num = 1;
+            while (row + add_num < size() - 1
+                    && board.tile(col, row + add_num) == null)
+                add_num ++;
+
+            if (board.tile(col, row + add_num) == null) {
+
+            } else {
+                if (board.tile(col, row + add_num).value() != tile.value()) {
+                    add_num --;
+                }
+            }
+
+            boolean isMerge = board.move(col, row + add_num, tile);
+            if (isMerge) score += tile.value() * 2;
+            if (add_num != 0) changed = true ;
+            -- row ;
+        }
+        return changed;
+    }
+
+
+//    private boolean processCol(int col) {
+//        boolean changed = false;
+//        int row = 0; // from the bottom
+//        while (row < size() - 1) {
+//            Tile tile = board.tile(col, row);
+//            if (tile == null) {
+//                ++ row;
+//                continue;
+//            }
+//            if (board.tile(col, row + 1) == null ||
+//                    board.tile(col, row + 1).value() == tile.value()) {
+//                boolean isMerge = board.move(col, row + 1, tile);
+//                if (isMerge) score += tile.value() * 2;
+//                changed = true ;
+//            }
+//            ++ row ;
+//        }
+//        return changed;
+//    }
+
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
      */
