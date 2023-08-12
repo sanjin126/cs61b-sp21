@@ -1,6 +1,7 @@
 package game2048;
 
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.Observable;
 
 
@@ -113,6 +114,12 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        board.setViewingPerspective(side);
+        for (int c = 0; c < size(); c ++) {
+            if ( processCol(c) ) {
+                changed = true;
+            }
+        }
 
         checkGameOver();
         if (changed) {
@@ -194,6 +201,11 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        Iterator<Tile> iterator = b.iterator();
+        while (iterator.hasNext()) {
+            Tile t = iterator.next();
+            if (t == null) return true;
+        }
         return false;
     }
 
@@ -204,6 +216,12 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        /* recur each tile on the board */
+        Iterator<Tile> iterator = b.iterator();
+        while (iterator.hasNext()) {
+            Tile t = iterator.next();
+            if (t != null && t.value() == MAX_PIECE) return true;
+        }
         return false;
     }
 
@@ -215,6 +233,30 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        Iterator<Tile> iterator = b.iterator();
+        while (iterator.hasNext()) {
+            Tile t = iterator.next();
+            if (t == null) return true;
+        }
+        int dir[][] = {
+                {1,  0},
+                {0,  1},
+                {-1, 0},
+                {0,  -1}
+        } ;
+        iterator = b.iterator();
+        while (iterator.hasNext()) {
+            Tile t = iterator.next();
+            for (int i = 0; i < 4; i ++) {
+                int newR = t.row() + dir[i][0];
+                int newC = t.col() + dir[i][1];
+                if (newR < 0 || newC < 0 || newR >= b.size() || newC >= b.size())
+                    continue;
+                int val = b.tile(t.row()+dir[i][0], t.col()+dir[i][1]).value();
+                if (val == t.value()) return true;
+            }
+        }
+
         return false;
     }
 
