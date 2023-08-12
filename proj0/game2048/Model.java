@@ -124,6 +124,7 @@ public class Model extends Observable {
     private boolean processCol(int col) {
         boolean changed = false;
         int row = size() - 2; // from the second top
+        int merge_top_range = size() - 1;
         while (row >= 0) {
             Tile tile = board.tile(col, row);
             if (tile == null) {
@@ -132,7 +133,7 @@ public class Model extends Observable {
             }
 
             int add_num = 1;
-            while (row + add_num < size() - 1
+            while (row + add_num < merge_top_range
                     && board.tile(col, row + add_num) == null)
                 add_num ++;
 
@@ -145,7 +146,10 @@ public class Model extends Observable {
             }
 
             boolean isMerge = board.move(col, row + add_num, tile);
-            if (isMerge) score += tile.value() * 2;
+            if (isMerge) {
+                score += tile.value() * 2;
+                merge_top_range = row + add_num - 1;
+            }
             if (add_num != 0) changed = true ;
             -- row ;
         }
